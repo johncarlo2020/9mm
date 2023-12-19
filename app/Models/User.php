@@ -24,6 +24,32 @@ class User extends Authenticatable
         'password',
     ];
 
+    protected $appends = ['role','agency'];
+
+    public function getAgencyAttribute()
+    {
+        return $this->agent()->first()->agency_id ?? '';
+
+    }
+
+
+    public function agent()
+    {
+        return $this->hasOne(Agent::class);
+    }
+
+    public function emergency()
+    {
+        return $this->hasMany(Emergency::class);
+    }
+
+    public function getRoleAttribute()
+    {
+        // Assuming a user has only one role, you can adjust this logic based on your requirements
+        $role = $this->roles->first();
+
+        return $role ? $role->name : null;
+    }
     /**
      * The attributes that should be hidden for serialization.
      *

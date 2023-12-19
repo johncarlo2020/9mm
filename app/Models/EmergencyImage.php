@@ -5,25 +5,20 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Agency extends Model
+class EmergencyImage extends Model
 {
     use HasFactory;
 
-    public $table = 'agency';
+    public $table = 'emergency_images';
 
     protected $fillable = [
-        'name',
+        'image',
+        'emergency_id',
     ];
-
-    public function agents()
-    {
-        return $this->belongsTo(User::class, 'user_id');
-    }
 
     public function emergency()
     {
-        return $this->hasMany(Emergency::class);
+        return $this->belongsTo(Emergency::class);
     }
 
-  
 }
