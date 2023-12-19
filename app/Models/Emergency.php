@@ -18,7 +18,7 @@ class Emergency extends Model
         'status'
     ];
 
-    protected $appends = ['status'];
+    protected $appends = ['status','images'];
 
 
     public function getStatusAttribute()
@@ -31,6 +31,13 @@ class Emergency extends Model
         return 'Dispatched';
         
     }
+    public function getImagesAttribute()
+    {
+        $file = $this->getAttributes()['images'] ?? '';
+
+        return  asset('storage/' . $file);
+    }
+
     public function images()
     {
         return $this->hasMany(EmergencyImage::class);
