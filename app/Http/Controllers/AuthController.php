@@ -23,6 +23,7 @@ class AuthController extends Controller
             'name' => 'required',
             'email' => 'required|email|unique:users',
             'password' => 'required',
+            'fcm_token' => 'required'
         ]);
 
         if($validateUser->fails()){
@@ -37,7 +38,8 @@ class AuthController extends Controller
             $user = User::create([
                 'name' => $request->name,
                 'email' => $request->email,
-                'password' => Hash::make($request->password)
+                'password' => Hash::make($request->password),
+                'fcm_token' => $request->fcm_token
             ]);
 
            DB::commit();
@@ -66,6 +68,7 @@ class AuthController extends Controller
             [
                 'email' => 'required|email',
                 'password' => 'required',
+                'fcm_token' => 'required'
             ]);
 
             if($validateUser->fails()){
@@ -84,6 +87,8 @@ class AuthController extends Controller
             }
 
             $user = User::where('email', $request->email)->first();
+            $user->fcm_token = $request->fcm_token;
+            $user->save();
 
             return response()->json([
                 'status' => true,
