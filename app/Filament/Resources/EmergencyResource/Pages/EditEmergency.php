@@ -5,6 +5,10 @@ namespace App\Filament\Resources\EmergencyResource\Pages;
 use App\Filament\Resources\EmergencyResource;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
+use App\Models\User;
+use App\Models\Emergency;
+
+use App\Models\Agency;
 
 class EditEmergency extends EditRecord
 {
@@ -17,10 +21,5 @@ class EditEmergency extends EditRecord
         ];
     }
 
-    protected function beforeSave(): void
-    {
-        $record = $this->getRecord();
-
-        $record->update(['status' => '1']);
-    }
+   
 }

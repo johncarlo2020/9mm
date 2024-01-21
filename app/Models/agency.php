@@ -25,5 +25,10 @@ class Agency extends Model
         return $this->hasMany(Emergency::class);
     }
 
+    public function responders()
+    {
+        return $this->hasMany(Responder::class);
+    }
+
   
 }

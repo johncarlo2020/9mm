@@ -43,6 +43,11 @@ class Emergency extends Model
         return $this->hasMany(EmergencyImage::class);
     }
 
+    public function responders()
+    {
+        return $this->hasMany(EmergencyResponder::class);
+    }
+
     public function user()
     {
         return $this->belongsTo(User::class);

@@ -6,6 +6,8 @@ use App\Filament\Resources\EmergencyResource\Pages;
 use App\Filament\Resources\EmergencyResource\RelationManagers;
 use App\Models\Emergency;
 use Filament\Forms;
+use App\Models\User;
+
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -33,6 +35,8 @@ class EmergencyResource extends Resource
                     ->options([
                         0   => 'Pending',
                         1   => 'Dispatched',
+                        2   => 'Deployed',
+
                     ])
                     ->required(),
             ]);
@@ -77,7 +81,40 @@ class EmergencyResource extends Resource
             ])
             ->striped()
             ->actions([
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\EditAction::make()
+                ->using(function (Emergency $record, array $data): Emergency {
+                    $record->update($data);
+             
+                    $tokens = User::where('id',$record->user_id)->pluck('fcm_token');
+
+                    $agency = Agency::where('id',$record->agency_id)->pluck('name');
+
+                    if($record->status == 1)
+                    {
+                        $data = [
+                            "title" => 'Emergency has been dispatched to'.$agency,
+                            "body"  => "Dispatched",
+                            "data"  => [
+                                "type"                  => 'alarm',
+                                "priority"              => 'high',
+                            ]
+                        ];
+                    }else if($record->status == 2)
+                    {
+                        $data = [
+                            "title" => 'Emergency has been deployed by'.$agency.'to your location.',
+                            "body"  => "On the Way",
+                            "data"  => [
+                                "type"                  => 'alarm',
+                                "priority"              => 'high',
+                            ]
+                        ];
+                    }
+            
+                    $firebase  = sendToTokenArray($tokens, $data);
+
+                    return $record;
+                }),
                 Tables\Actions\ViewAction::make(),
 
             ])
@@ -92,6 +129,8 @@ class EmergencyResource extends Resource
     {
         return [
             RelationManagers\ImagesRelationManager::class,
+            RelationManagers\RespondersRelationManager::class,
+
         ];
     }
 
@@ -100,7 +139,7 @@ class EmergencyResource extends Resource
         return [
             'index' => Pages\ListEmergencies::route('/'),
            // 'create' => Pages\CreateEmergency::route('/create'),
-           // 'edit' => Pages\EditEmergency::route('/{record}/edit'),
+            'edit' => Pages\EditEmergency::route('/{record}/edit'),
            'view' => Pages\ViewEmergency::route('/{record}'),
         ];
     }
