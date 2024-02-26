@@ -12,7 +12,7 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class RespondersRelationManager extends RelationManager
 {
-    protected static string $relationship = 'responders';
+    protected static string $relationship = 'responder';
 
     public function form(Form $form): Form
     {
